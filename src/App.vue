@@ -1,60 +1,121 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+	<v-app id="inspire">
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+		<AppBar/>
 
-      <v-spacer></v-spacer>
+		<v-content>
+			<v-container
+				fluid
+			>
+				<v-row>
+					<v-col class="col-12">
+						<v-card
+							max-width="600"
+							class="mx-auto"
+						>
+							<v-toolbar
+								color="orange darken-4"
+								dark
+							>
+								<v-text-field
+									prepend-inner-icon="mdi-magnify"
+									flat
+									solo-inverted
+									hide-details
+									dense
+									filled
+									label="Search a contact"
+									clearable
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+									v-model="search"
+								></v-text-field>
 
-    <v-content>
-      <HelloWorld/>
-    </v-content>
-  </v-app>
+								<v-btn icon class="ml-5">
+									<v-icon>mdi-plus</v-icon>
+								</v-btn>
+							</v-toolbar>
+
+							<v-list>
+								<template v-for="(contact, index) in getFilteredContacts">
+									<!-- <v-divider v-if="index" :key="index"></v-divider> -->
+									<div v-if="!index" :key="index">
+										<v-subheader class="list-subheading">{{contact.name.substring(1, -1).toUpperCase()}}</v-subheader>
+									</div>
+									<div v-else>
+										<v-subheader
+											class="list-subheading"
+											v-if="contact.name.substring(1, -1).toUpperCase() != getFilteredContacts[index - 1].name.substring(1, -1).toUpperCase()"
+										>{{contact.name.substring(1, -1).toUpperCase()}}</v-subheader>
+										<v-divider v-else></v-divider>
+									</div>
+
+									<ContactListItem :contact="contact"/>
+								</template>
+								<template v-if="!getFilteredContacts.length">
+									<v-list-item>
+										<v-list-item-content>
+											<v-list-item-title class="text-center">
+												<div v-if="search  && search.trim()">There is no such contact.</div>
+												<div v-else>
+													Contact list is empty.<br/>
+													<a href="" @click.prevent="addContact()">Add some contact!</a>
+												</div>
+											</v-list-item-title>
+										</v-list-item-content>
+									</v-list-item>
+								</template>
+							</v-list>
+						</v-card>
+					</v-col>
+				</v-row>
+			</v-container>
+		</v-content>
+	</v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+	import AppBar from './components/AppBar.vue'
+	import ContactListItem from './components/ContactListItem.vue'
+	export default {
+		data: () => ({
+			search : '',
+		}),
+		components: {
+			AppBar,
+			ContactListItem,
+		},
+		methods : {
+			// поиск по ключевому запросу
+			searchContacts(contacts, cond){
+				return contacts.filter((contact, index) => {
+					contact.id = index;
+					return contact.name.toLowerCase().indexOf(cond.toLowerCase()) >= 0;
+				});
+			},
+			// сортировака по имени
+			getSorteredContacts(contacts){
+				return contacts.sort(function(a, b) { 
+					if (a.name > b.name) return 1;
+					if (a.name < b.name) return -1;
+					return 0; 
+				});
+			}
+		},
+		computed : {
+			// поиск по ключевому запросу
+			getFilteredContacts(){
+				let contacts = this.$store.getters.getContacts;
+				if (this.search && this.search.trim()) {
+					contacts = this.searchContacts(contacts, this.search.trim());
+				}
 
-export default {
-  name: 'App',
-
-  components: {
-    HelloWorld,
-  },
-
-  data: () => ({
-    //
-  }),
-};
+				return this.getSorteredContacts(contacts);
+			},
+		}
+	}
 </script>
+<style scoped>
+	.list-subheading {
+		background-color: #f6f6f6;
+	}
+</style>
