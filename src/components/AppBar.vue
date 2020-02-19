@@ -5,12 +5,7 @@
 			:clipped="$vuetify.breakpoint.lgAndUp"
 			app
 		>
-			<v-list dense>
-				<MenuListItem @click="" icon="mdi-plus" text="New contact"/>
-				<MenuListItem @click="" icon="mdi-import" text="Import"/>
-				<MenuListItem @click="" icon="mdi-export" text="Export"/>
-				<MenuListItem @click="" icon="mdi-file" text="Export to CSV"/>
-			</v-list>
+			<MenuLists/>
 		</v-navigation-drawer>
 		<v-app-bar
 			:clipped-left="$vuetify.breakpoint.lgAndUp"
@@ -28,20 +23,22 @@
 
 			<v-spacer />
 			
-			<v-btn icon>
+			<v-btn href="https://github.com/jhasuev/phonebook-vue" target="_blank" icon>
 				<v-icon>mdi-code-tags</v-icon>
 			</v-btn>
 		</v-app-bar>
 	</div>
 </template>
 <script>
-	import MenuListItem from './MenuListItem.vue'
+	import MenuLists from './MenuLists.vue'
 	export default {
-		data: () => ({
-			drawer: null,
-		}),
+		data(){
+			return {
+				drawer: false,
+			}
+		},
 		components : {
-			MenuListItem,
-		}
+			MenuLists,
+		},
 	}
 </script>
