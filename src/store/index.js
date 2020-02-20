@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		search : '',
 		contacts : [
 			{
 				name : 'Anton',
@@ -50,12 +51,15 @@ export default new Vuex.Store({
 	},
 	getters: {
 		getContacts(state){
-			for(let i = 0, len = state.contacts.length; i < len; i++){
-				state.contacts[i].id = i;
-			}
+			state.contacts.map((contact, index) => {
+				contact.id = index
+			});
 
 			return state.contacts;
 		},
+		getSearch(state){
+			return state.search
+		}
 	},
 	mutations: {
 		editContact(state, contact){
@@ -72,5 +76,8 @@ export default new Vuex.Store({
 		mergeContacts(state, newContacts){
 			state.contacts = state.contacts.concat(newContacts)
 		},
+		setSearch(state, str){
+			state.search = str
+		}
 	},
 })

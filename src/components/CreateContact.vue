@@ -92,15 +92,14 @@
 						email : this.email,
 					});
 					// this.$forceUpdate();
-					this.$refs.form.reset();
-					this.dialog = false;
+					this.close();
 
 					eventEmitter.$emit("snackShow", {
 						text : 'Contact was created successfully!',
 					})
 				}
 			},
-			cancel(){
+			close(){
 				this.$refs.form.reset();
 				this.dialog = false;
 			},

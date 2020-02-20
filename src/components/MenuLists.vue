@@ -81,9 +81,7 @@
 			getContactsForImport() {
 				let contacts = JSON.parse(JSON.stringify(this.$store.getters.getContacts))
 				// удаляем лишний элемент контактов, который не нужен в CSV документе
-				contacts.forEach((contact)=>{
-					delete contact.id;
-				});
+				contacts.forEach(contact => { delete contact.id });
 				// отправляем на скачивание
 				return contacts;
 			},

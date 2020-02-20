@@ -14,7 +14,7 @@
 				<v-textarea
 					v-model="json"
 					:rules="jsonRules"
-					label="Paster here a JSON string"
+					label="Paste here a JSON string"
 					required
 				></v-textarea>
 
@@ -53,7 +53,7 @@
 				valid: true,
 				json: '',
 				jsonRules: [
-					v => !!(v && v.trim()) || 'Paste a JSON here',
+					v => !!(v && v.trim()) || 'The field cannot be empty',
 					v => this.isJSON(v) || 'This is not valid JSON',
 				],
 			}
@@ -71,10 +71,9 @@
 						let imported_contact = JSON.parse(JSON.stringify(contact));
 
 						let isset = this.$store.getters.getContacts.some(origin_contact => {
-							let copied_contact = JSON.parse(JSON.stringify(origin_contact));
-							if ((imported_contact.name == copied_contact.name) &&
-								(imported_contact.phone == copied_contact.phone) &&
-								(imported_contact.email == copied_contact.email)) {
+							if ((imported_contact.name == origin_contact.name) &&
+								(imported_contact.phone == origin_contact.phone) &&
+								(imported_contact.email == origin_contact.email)) {
 								return true;
 							}
 						})
@@ -84,6 +83,8 @@
 						}
 
 					})
+
+					// мёржим контакты
 					this.$store.commit('mergeContacts', contacts_for_importing);
 
 					this.close();

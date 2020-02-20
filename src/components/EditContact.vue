@@ -93,16 +93,16 @@
 						phone : this.phone,
 						email : this.email,
 					});
-					this.$refs.form.reset();
-					this.dialog = false;
 					this.contactIndex = null;
 
 					eventEmitter.$emit("snackShow", {
 						text : 'Contact was editted successfully!',
 					})
+
+					this.close();
 				}
 			},
-			cancel(){
+			close(){
 				this.$refs.form.reset();
 				this.dialog = false;
 			},
