@@ -38,7 +38,7 @@
 						outlined
 						color="red"
 						class="mr-4"
-						@click="cancel()"
+						@click="close()"
 					>
 						<v-icon small class="mr-3">mdi-backspace-outline</v-icon>
 						Cancel
@@ -59,8 +59,10 @@
 </template>
 
 <script>
-	import {eventEmitter} from '../main'
+	import { mapGetters, mapMutations } from 'vuex'
+
 	export default {
+		name: 'EditContact',
 		data(){
 			return {
 				dialog: false,
@@ -84,10 +86,19 @@
 				],
 			}
 		},
+		computed: {
+			...mapGetters([
+				'getContacts',
+			]),
+		},
 		methods : {
+			...mapMutations([
+				'editContact',
+			]),
+
 			save(){
 				if (this.$refs.form.validate()) {
-					this.$store.commit('editContact', {
+					this.editContact({
 						contactIndex : this.contactIndex,
 						name : this.name,
 						phone : this.phone,
@@ -95,7 +106,7 @@
 					});
 					this.contactIndex = null;
 
-					eventEmitter.$emit("snackShow", {
+					this.$root.$emit("snackShow", {
 						text : 'Contact was editted successfully!',
 					})
 
@@ -108,14 +119,13 @@
 			},
 		},
 		created(){
-			eventEmitter.$on("editContactOpen", (contactIndex)=>{
+			this.$root.$on("editContactOpen", (contactIndex)=>{
 				this.dialog = true;
 
-				// this.name = this.$store.getters.getContacts[contactIndex].name + ' | #' + contactIndex;
 				this.contactIndex = contactIndex;
-				this.name = this.$store.getters.getContacts[contactIndex].name;
-				this.phone = this.$store.getters.getContacts[contactIndex].phone;
-				this.email = this.$store.getters.getContacts[contactIndex].email;
+				this.name = this.getContacts[contactIndex].name;
+				this.phone = this.getContacts[contactIndex].phone;
+				this.email = this.getContacts[contactIndex].email;
 			});
 		}
 	}

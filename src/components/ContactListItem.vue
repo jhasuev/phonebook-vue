@@ -5,7 +5,7 @@
 	>
 		<template v-slot:activator>
 			<v-list-item-avatar>
-				<v-img :src="'https://i.pravatar.cc/100?' + contact.id"></v-img>
+				<v-img :src="`https://dummyimage.com/100x100/d6792d/000f0f.gif&text=${contact.id + 1}`" />
 			</v-list-item-avatar>
 
 			<v-list-item-content>
@@ -35,9 +35,14 @@
 	</v-list-group>
 </template>
 <script>
-	import {eventEmitter} from '../main'
 	export default {
-		props: ['contact'],
+		name: 'ContactListItem',
+		props: {
+			contact: {
+				type: Object,
+				default: () => ({})
+			},
+		},
 		methods : {
 			onCall(){
 				window.open('tel:' + this.contact.phone);
@@ -46,7 +51,7 @@
 				window.open('mailto:' + this.contact.email);
 			},
 			edit(){
-				eventEmitter.$emit('editContactOpen', this.contact.id)
+				this.$root.$emit('editContactOpen', this.contact.id)
 			},
 			remove(){
 				this.$refs['list-group'].click();

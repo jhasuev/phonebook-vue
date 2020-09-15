@@ -44,8 +44,10 @@
 </template>
 
 <script>
-	import {eventEmitter} from '../main'
+	import { mapGetters, mapMutations } from 'vuex'
+
 	export default {
+		name: 'ImportContacts',
 		data(){
 			return {
 				dialog: false,
@@ -58,7 +60,21 @@
 				],
 			}
 		},
+		computed: {
+			...mapGetters([
+				'getContacts',
+			]),
+		},
+		created(){
+			this.$root.$on("importContactsOpen", () => {
+				this.dialog = true;
+			});
+		},
 		methods : {
+			...mapMutations([
+				'mergeContacts',
+			]),
+
 			onImport(){
 				if (this.isJSON(this.json)) {
 					// сначала проверяем, какие из контактов в импортируемом массиве уже существуют
@@ -70,12 +86,9 @@
 					imported_contacts.forEach(contact => {
 						let imported_contact = JSON.parse(JSON.stringify(contact));
 
-						let isset = this.$store.getters.getContacts.some(origin_contact => {
-							if ((imported_contact.name == origin_contact.name) &&
-								(imported_contact.phone == origin_contact.phone) &&
-								(imported_contact.email == origin_contact.email)) {
-								return true;
-							}
+						let isset = this.getContacts.some(origin_contact => {
+							return (imported_contact.phone == origin_contact.phone)
+									&& (imported_contact.email == origin_contact.email)
 						})
 						
 						if (!isset) {
@@ -85,11 +98,11 @@
 					})
 
 					// мёржим контакты
-					this.$store.commit('mergeContacts', contacts_for_importing);
+					this.mergeContacts(contacts_for_importing);
 
 					this.close();
 
-					eventEmitter.$emit("snackShow", {
+					this.$root.$emit("snackShow", {
 						text : contacts_for_importing.length + ' of ' + imported_contacts.length + ' were imported successfully!',
 					})
 				}
@@ -105,10 +118,5 @@
 				return false;
 			}
 		},
-		created(){
-			eventEmitter.$on("importContactsOpen", ()=>{
-				this.dialog = true;
-			});
-		}
 	}
 </script>

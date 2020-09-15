@@ -1,29 +1,35 @@
 <template>
 	<v-text-field
-		prepend-inner-icon="mdi-magnify"
 		flat
 		solo-inverted
 		hide-details
 		dense
 		filled
-		label="Search a contact"
 		clearable
 
+		prepend-inner-icon="mdi-magnify"
+		label="Search a contact"
+
 		:value="getSearch"
-		@input="setSearch"
+		@input="setSearch($event)"
 	></v-text-field>
 </template>
 <script>
+
+	import { mapGetters, mapMutations } from 'vuex'
+
 	export default {
-		methods : {
-			setSearch(v){
-				this.$store.commit("setSearch", v);
-			},
-		},
+		name: 'ContactSearch',
 		computed : {
-			getSearch(){
-				return this.$store.getSearch;
-			},
-		}
+			...mapGetters([
+				'getSearch',
+			]),
+		},
+		methods: {
+			...mapMutations([
+				'setSearch',
+			]),
+		},
 	}
+
 </script>

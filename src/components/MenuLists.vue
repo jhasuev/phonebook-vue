@@ -1,61 +1,76 @@
 <template>
 	<div>
 		<v-list dense>
+			
 			<v-list-item
+				v-for="(menu_item, i) in menu"
+				:key="i"
+				@click="onClickMenu(menu_item.action)"
+
 				link
-				@click="getCreate()"
 			>
 				<v-list-item-action>
-					<v-icon>mdi-plus</v-icon>
+					<v-icon>{{ menu_item.icon }}</v-icon>
 				</v-list-item-action>
 				<v-list-item-content>
-					<v-list-item-title>New contact</v-list-item-title>
+					<v-list-item-title>{{ menu_item.title }}</v-list-item-title>
 				</v-list-item-content>
 			</v-list-item>
-			<v-list-item
-				link
-				@click="onImport()"
-			>
-				<v-list-item-action>
-					<v-icon>mdi-import</v-icon>
-				</v-list-item-action>
-				<v-list-item-content>
-					<v-list-item-title>Import</v-list-item-title>
-				</v-list-item-content>
-			</v-list-item>
-			<v-list-item
-				link
-				@click="onExport()"
-			>
-				<v-list-item-action>
-					<v-icon>mdi-export</v-icon>
-				</v-list-item-action>
-				<v-list-item-content>
-					<v-list-item-title>Export</v-list-item-title>
-				</v-list-item-content>
-			</v-list-item>
-			<v-list-item
-				link
-				@click="onExportCSV()"
-			>
-				<v-list-item-action>
-					<v-icon>mdi-file</v-icon>
-				</v-list-item-action>
-				<v-list-item-content>
-					<v-list-item-title>Export to CSV</v-list-item-title>
-				</v-list-item-content>
-			</v-list-item>
-		
+
 		</v-list>
 	</div>
 </template>
 <script>
-	import {eventEmitter} from '../main'
+
+	import { mapGetters } from 'vuex'
+
 	export default {
+		name: 'MenuLists',
+		data(){
+			return {
+				menu: [
+					{
+						icon: 'mdi-plus',
+						title: 'New contact',
+						action: 'create',
+					},
+					{
+						icon: 'mdi-import',
+						title: 'Import',
+						action: 'import',
+					},
+					{
+						icon: 'mdi-export',
+						title: 'Export',
+						action: 'export',
+					},
+					{
+						icon: 'mdi-file',
+						title: 'Export to CSV',
+						action: 'exportCSV',
+					},
+				],
+			}
+		},
+		computed: {
+			...mapGetters([
+				'getContacts',
+			]),
+		},
 		methods : {
-			getCreate(){
-				eventEmitter.$emit("createContactOpen");
+			onClickMenu(action){
+				switch(action){
+					case 'create': this.getCreate(); break;
+					case 'import': this.onImport(); break;
+					case 'export': this.onExport(); break;
+					case 'exportCSV': this.onExportCSV(); break;
+				}
 			},
+
+			getCreate(){
+				this.$root.$emit("createContactOpen");
+			},
+
 			download(text, format) {
 				// скачиваеем файлы в нужном формате
 				let element = document.createElement('a');
@@ -67,26 +82,31 @@
 				element.click();
 				document.body.removeChild(element);
 			},
+
 			onImport() {
-				eventEmitter.$emit("importContactsOpen");
+				this.$root.$emit("importContactsOpen");
 			},
+
 			onExport() {
 				// отправляем на скачивание
 				this.download(JSON.stringify(this.getContactsForImport()), 'json');
 			},
+
 			onExportCSV() {
 				// отправляем на скачивание
 				this.download(this.convert2CSV(this.getContactsForImport()), 'csv');
 			},
+
 			getContactsForImport() {
-				let contacts = JSON.parse(JSON.stringify(this.$store.getters.getContacts))
+				let contacts = JSON.parse(JSON.stringify(this.getContacts))
 				// удаляем лишний элемент контактов, который не нужен в CSV документе
 				contacts.forEach(contact => { delete contact.id });
 				// отправляем на скачивание
 				return contacts;
 			},
+
 			convert2CSV(objArray) {
-			    let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+			  let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
 				let str = '';
 
 				if (array && array.length) {

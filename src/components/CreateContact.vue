@@ -38,7 +38,7 @@
 						outlined
 						color="red"
 						class="mr-4"
-						@click="cancel()"
+						@click="close()"
 					>
 						<v-icon small class="mr-3">mdi-backspace-outline</v-icon>
 						Cancel
@@ -59,8 +59,10 @@
 </template>
 
 <script>
-	import {eventEmitter} from '../main'
+	import { mapMutations } from 'vuex'
+
 	export default {
+		name: 'CreateContact',
 		data(){
 			return {
 				dialog: false,
@@ -84,17 +86,21 @@
 			}
 		},
 		methods : {
+			...mapMutations([
+				'addContact',
+			]),
+
 			create(){
 				if (this.$refs.form.validate()) {
-					this.$store.commit('addContact', {
+					this.addContact({
 						name : this.name,
 						phone : this.phone,
 						email : this.email,
 					});
-					// this.$forceUpdate();
+
 					this.close();
 
-					eventEmitter.$emit("snackShow", {
+					this.$root.$emit("snackShow", {
 						text : 'Contact was created successfully!',
 					})
 				}
@@ -105,7 +111,7 @@
 			},
 		},
 		created(){
-			eventEmitter.$on("createContactOpen", ()=>{
+			this.$root.$on("createContactOpen", ()=>{
 				this.dialog = true;
 			});
 		}

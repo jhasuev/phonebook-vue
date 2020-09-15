@@ -54,13 +54,13 @@
 </template>
 
 <script>
-	import {eventEmitter} from './main'
 	import AppBar from './components/AppBar.vue'
 	import CreateContact from './components/CreateContact.vue'
 	import EditContact from './components/EditContact.vue'
 	import ContactList from './components/ContactList.vue'
 	import ImportContacts from './components/ImportContacts.vue'
 	import ContactSearch from './components/ContactSearch.vue'
+	
 	export default {
 		data(){
 			return {
@@ -71,11 +71,11 @@
 		},
 		methods : {
 			onCreate(){
-				eventEmitter.$emit("createContactOpen");
+				this.$root.$emit("createContactOpen");
 			},
 		},
 		created(){
-			eventEmitter.$on("snackShow", (snackbar) => {
+			this.$root.$on("snackShow", (snackbar) => {
 				this.snackbar_show = true;
 				this.snackbar_text = snackbar.text;
 				this.snackbar_color = snackbar.color || 'dark';
