@@ -1,5 +1,5 @@
 # phonebook-vue
-# DEMO => http://hasuev.ru/phonebook-vue/
+# DEMO => https://jhasuev.github.io/phonebook-vue/dist/
 
 ## Project setup
 ```
